@@ -1,6 +1,7 @@
 module Level ( 
     Level(..)
   , Layout
+  , asStringList
   , createRoom
 ) where
 
@@ -9,13 +10,46 @@ import Unit
 import Player
 
 import qualified Data.Map.Strict as Map
-import Data.List(transpose)
+import GHC.Exts(sortWith)
+import Data.List(transpose, sortBy, groupBy, foldl')
+import Data.Ord(comparing)
 
 data Level = Level {
     dim    :: XY
   , layout :: Layout
+  , units  :: [Unit]
 }
-type Layout = [[Char]]
+
+--type Layout = [[Char]]
+type Layout = Map.Map XY Char
+
+asStringList :: Layout -> [[Char]]
+asStringList l = (\line -> (\(_,v) -> v) <$> line) <$> grouped where
+    sorted  = sortWith (\((x,y),_) -> (y,x)) $ Map.toList l
+    grouped = groupBy (\a b -> (snd $ fst a) == (snd $ fst b)) sorted
+
+asMap :: XY -> [[Char]] -> Layout
+asMap (x,y) strs = Map.fromList $ foldr (++) [] ll where
+    ll = (\(s,x) -> ((\(c,y) -> ((x,y),c))
+                 <$> zip s [0..y-1] )) <$> zip strs [0..x-1]
+
+placeCorners :: XY -> Layout -> Layout
+placeCorners (x,y) l = (Map.insert (0,0) (sym "DR"))    -- (0,0) is top left
+                     $ (Map.insert (x,0) (sym "DL"))
+                     $ (Map.insert (0,y) (sym "UR")) 
+                     $  Map.insert (x,y) (sym "UL") l
+
+placeWalls :: XY -> Layout -> Layout
+placeWalls (x,y) l = l'' where
+    top   = [(a,y) | a<-[0..x-1]]
+    bot   = [(a,0) | a<-[0..x-1]]
+    left  = [(0,b) | b<-[0..y-1]]
+    right = [(x,b) | b<-[0..y-1]]
+    l'  = foldl' (\m k -> Map.insert k (sym "H") m) l  (top++bot)
+    l'' = foldl' (\m k -> Map.insert k (sym "V") m) l' (left++right)
+
+enclose' :: XY -> Layout -> Layout
+enclose' xy l = (placeCorners xy) $ placeWalls xy l
 
 enclose :: [[Char]] -> [[Char]]
 enclose l = transpose l'' where
@@ -28,7 +62,9 @@ enclose l = transpose l'' where
     l'' = (init $ left : (tail $ transpose l')) ++ [right]
 
 createRoom :: Int -> Level
-createRoom seed = Level dim layout where
+createRoom seed = Level dim layout units where
     dim = (seed, seed)
-    layout = enclose $ replicate (snd dim) $ replicate (fst dim) $ sym "serpent"
+    layout = enclose' dim $ asMap dim
+        $ replicate (snd dim) $ replicate (fst dim) $ sym "serpent"
+    units = []
              

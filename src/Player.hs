@@ -1,5 +1,5 @@
 module Player ( 
-    Player
+    Player(..)
   , createPC
   , listDeities , listTraits
   , chooseDeity , chooseTraits

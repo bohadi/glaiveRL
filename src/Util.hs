@@ -35,7 +35,7 @@ glyphs = Map.fromList $ fmap swap [
   , ('┣', "VR") , ('├', "vr")
   , ('┫', "VL") , ('┤', "vl")
     -- enemy
-  , ('ㄆ', "beast1") , ('ㄉ', "beast2") , ('ガ', "beast3") 
+  , ('ㄆ', "beastA") , ('ㄉ', "beastB") , ('ガ', "beastC") 
   , ('ゆ', "ogre") , ('わ', "ogrechief")                            -- beasts
 
   , ('ϡ', "wingedling") , ('Ϡ', "winged") 
@@ -67,6 +67,7 @@ glyphs = Map.fromList $ fmap swap [
   , ('▣', "switch")
   , ('‰', "gears")
   , ('ש', "harp") , ('♪', "music1") , ('♫', "music2")
+  , ('₽', "fishing rod") 
     -- effects
   , ('ϟ', "bolt")  , ('Ϟ', "arc")
   , ('ж', "flame") , ('Ж', "fire")
