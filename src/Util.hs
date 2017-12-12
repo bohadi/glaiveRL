@@ -1,6 +1,7 @@
 module Util ( 
     XY(..)
   , sym
+  , isPathableGlyph
 ) where
 
 import Data.Tuple(swap)
@@ -12,15 +13,22 @@ type XY = (Int, Int)
 sym :: String -> Char
 sym s = fromJust $ Map.lookup s glyphs
 
+isPathableGlyph :: Char -> Bool
+isPathableGlyph c
+  | c == sym "dirt"  = True
+  | c == sym "grass" = True
+  | c == sym "stone" = True
+  | otherwise        = False
+
 glyphs = Map.fromList $ fmap swap [
     -- player
     ('₩', "pc")       
     -- terrain
   , (' ', "dirt")
   , ('░', "grass")
-  , ('▒', "rock1")
-  , ('▓', "rock2")
-  , ('█', "rock3")
+  , ('▒', "stone")
+  , ('▓', "unused")
+  , ('█', "rock")
     -- walls
   , ('┇', "prisonV") , ('┅', "prisonH")
   , ('┃', "V")  , ('│', "v")

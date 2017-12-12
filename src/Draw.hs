@@ -8,12 +8,12 @@ import Player
 import Level
 import World
 
-import Data.Maybe(fromJust)
 import Data.List(intersperse, foldl')
+import qualified Data.Map.Strict as Map
 
 render :: Player -> World -> IO ()
 render p w = do 
-    let lvl = fromJust $ lookup "cur" $ levels w
+    let lvl = currentLevel w
     let lay = placeUnits p (units lvl) (layout lvl)
     mapM_ putStrLn $ doubleWidth <$> asStringList lay
 
@@ -27,9 +27,8 @@ inWall :: Char -> Bool
 inWall x = elem x $ sym "H" : sym "DR" : sym "UR" : []
 
 placeCharAt :: Layout -> (Char, XY) -> Layout
-placeCharAt l (c,(x,y)) = l' where
-    l' = l --TODO
+placeCharAt l (c,(x,y)) = Map.insert (x,y) c l
 
 placeUnits :: Player -> [Unit] -> Layout -> Layout
-placeUnits p us l = placeCharAt l' ((sym "pc"), (pos p)) where
-    l' = foldl' placeCharAt l $ (\(n,_,xy) -> (sym n, xy)) <$> us
+placeUnits p us l = foldl' placeCharAt l nXYs where
+    nXYs = ((sym "pc"), (pos p)) : ( (\(n,_,xy)->(sym n, xy)) <$> us )

@@ -19,6 +19,13 @@ start = do
     s  <- score gg
     return ()
 
+gameOver :: Game -> Bool
+gameOver (p,w) = False
+
+score :: Game -> IO ()
+score (p,w) = do
+    return ()
+
 newGame :: IO (Player, World)
 newGame = do 
     p <- newPlayer
@@ -45,7 +52,7 @@ gameLoop :: Game -> IO Game
 gameLoop g@(p,w) = do 
     render p w
     i <- getInput
-    if i == Quit then return g else
+    if i == (Cmd Quit) then return g else
         let g' = update g i
         in if gameOver g'
            then do putStrLn "Good game."
@@ -56,13 +63,16 @@ isValid :: Game -> Input -> Bool
 isValid (p,w) i = True
 
 update :: Game -> Input -> Game
-update (p,w) i = (p, w)
+update (p,w) (Move i) =
+  let lvl = currentLevel w
+      pos' = move (pos p) i
+      isI  = isInteractable pos' lvl
+      isP  = isPathable     pos' lvl
+      p'   = p { pos = pos' }
+      -- p'   = p & pos ~ pos'   -- lens style
+  in if isP then (p',w) else (p,w)
 
-gameOver :: Game -> Bool
-gameOver (p,w) = False
 
-score :: Game -> IO ()
-score (p,w) = do
-    return ()
+
 
 

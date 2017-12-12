@@ -3,6 +3,10 @@ module Level (
   , Layout
   , asStringList
   , createRoom
+  , inBounds , outOfBounds
+  , isPathable
+  , isInteractable
+  , terrainAt
 ) where
 
 import Util
@@ -13,6 +17,7 @@ import qualified Data.Map.Strict as Map
 import GHC.Exts(sortWith)
 import Data.List(transpose, sortBy, groupBy, foldl')
 import Data.Ord(comparing)
+import Data.Maybe(fromJust)
 
 data Level = Level {
     dim    :: XY
@@ -20,8 +25,10 @@ data Level = Level {
   , units  :: [Unit]
 }
 
---type Layout = [[Char]]
 type Layout = Map.Map XY Char
+
+terrainAt :: XY -> Level -> Char
+terrainAt xy lvl = fromJust $ Map.lookup xy $ layout lvl
 
 asStringList :: Layout -> [[Char]]
 asStringList l = (\line -> (\(_,v) -> v) <$> line) <$> grouped where
@@ -51,7 +58,7 @@ placeWalls (x,y) l = l'' where
 enclose' :: XY -> Layout -> Layout
 enclose' xy l = (placeCorners xy) $ placeWalls xy l
 
-enclose :: [[Char]] -> [[Char]]
+enclose :: [[Char]] -> [[Char]]   -- deprecated
 enclose l = transpose l'' where
     dim = length $ l !! 0
     top = replicate dim (sym "H")
@@ -65,6 +72,19 @@ createRoom :: Int -> Level
 createRoom seed = Level dim layout units where
     dim = (seed, seed)
     layout = enclose' dim $ asMap dim
-        $ replicate (snd dim) $ replicate (fst dim) $ sym "serpent"
+        $ replicate (snd dim) $ replicate (fst dim) $ sym "grass"
     units = []
              
+outOfBounds :: XY -> XY -> Bool
+outOfBounds (x,y) (w,h) =
+    (x < 0) || (x > w-1) || (y < 0) || (y > h-1)
+inBounds :: XY -> XY -> Bool
+inBounds p d = not $ outOfBounds p d
+
+isPathable :: XY -> Level -> Bool
+isPathable xy lvl = 
+    (not $ outOfBounds xy (dim lvl)) && (isPathableGlyph $ terrainAt xy lvl)
+
+isInteractable :: XY -> Level -> Maybe Unit
+isInteractable (x,y) l =  Nothing -- TODO
+

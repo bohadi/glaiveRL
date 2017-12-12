@@ -1,23 +1,28 @@
 module Input ( 
     Input(..)
+  , Cinput(..)
+  , Minput(..)
   , getInput
+  , move
 ) where
 
 import Prelude hiding(Either(Left,Right))
 
 import Util
 import Unit
-import Player
-import Level
-import World
 
 import qualified Data.Map.Strict as Map
 import Data.Maybe(fromJust)
 import Data.List(intersperse)
 
-data Input =
-    Quit
-  | Wait
+data Input = Cmd Cinput | Move Minput
+  deriving (Show, Eq)
+
+data Cinput = Quit
+  deriving (Show, Eq)
+
+data Minput = 
+    Wait
   | Up
   | Down
   | Left
@@ -26,7 +31,7 @@ data Input =
   | UpR
   | DownL
   | DownR
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq)
 
 getInput :: IO Input
 getInput = do
@@ -39,10 +44,24 @@ keymap :: Char -> Maybe Input
 keymap c = Map.lookup c keys
 
 keys = Map.fromList $ [
-    ('Q', Quit)     , ('s', Wait)
+    ('Q', Cmd Quit)     
     -- movement
-  , ('j', Up)       , ('k', Down)
-  , ('h', Left)     , ('l', Right)
-  , ('t', UpL)      , ('y', UpR)
-  , ('b', DownL)    , ('n', DownR)
+  , ('s', Move Wait)
+  , ('j', Move Down)     , ('k', Move Up)
+  , ('h', Move Left)     , ('l', Move Right)
+  , ('t', Move UpL)      , ('y', Move UpR)
+  , ('b', Move DownL)    , ('n', Move DownR)
   ]
+
+move :: XY -> Minput -> XY
+move (x,y) m = case m of
+                 Wait  -> (x,y)
+                 Up    -> (x,y-1)
+                 Down  -> (x,y+1)
+                 Left  -> (x-1,y)
+                 Right -> (x+1,y)
+                 UpL   -> (x-1,y-1)
+                 UpR   -> (x+1,y-1)
+                 DownL -> (x-1,y+1)
+                 DownR -> (x+1,y+1)
+
