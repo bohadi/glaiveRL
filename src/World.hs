@@ -5,6 +5,7 @@ module World (
 
 import Util
 import Unit
+import Object
 import Player
 import Level
 

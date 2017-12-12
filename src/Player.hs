@@ -1,5 +1,8 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module Player ( 
     Player(..)
+  , pos
   , createPC
   , listDeities , listTraits
   , chooseDeity , chooseTraits
@@ -13,6 +16,8 @@ module Player (
 import Util
 import Unit
 import Input
+
+import Control.Lens
 
 createPC :: Name -> Deity -> [Trait] -> Player
 createPC na de tr = Player na 10 de st at sk tr su po where
@@ -30,7 +35,7 @@ data Player = Player {
   , stats  :: Stats     , attrs  :: Attrs
   , skills :: Skills    , traits :: [Trait]
   , status :: [Status]
-  , pos    :: XY  
+  , _pos    :: XY  
 } deriving (Show)
 
 data Attrs = Attrs {
@@ -79,3 +84,7 @@ data Trait =
   | GoodNatured
   | Jinxed
   deriving (Show, Eq, Ord, Enum, Read)
+
+
+makeLenses ''Player
+

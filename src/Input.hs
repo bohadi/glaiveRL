@@ -18,7 +18,8 @@ import Data.List(intersperse)
 data Input = Cmd Cinput | Move Minput
   deriving (Show, Eq)
 
-data Cinput = Quit
+data Cinput =
+    Quit
   deriving (Show, Eq)
 
 data Minput = 
@@ -49,7 +50,7 @@ keys = Map.fromList $ [
   , ('s', Move Wait)
   , ('j', Move Down)     , ('k', Move Up)
   , ('h', Move Left)     , ('l', Move Right)
-  , ('t', Move UpL)      , ('y', Move UpR)
+  , ('y', Move UpL)      , ('u', Move UpR)
   , ('b', Move DownL)    , ('n', Move DownR)
   ]
 

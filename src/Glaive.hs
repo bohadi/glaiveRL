@@ -2,13 +2,20 @@ module Glaive (
     start
 ) where
 
+import Prelude hiding(interact)
+
 import Util
 import Unit
+import Object
 import Player
 import Level
 import World
 import Draw
 import Input
+
+import Data.Maybe(isJust, fromJust)
+import qualified Data.Either as E
+import Control.Lens
 
 type Game = (Player, World)
 
@@ -64,15 +71,26 @@ isValid (p,w) i = True
 
 update :: Game -> Input -> Game
 update (p,w) (Move i) =
-  let lvl = currentLevel w
-      pos' = move (pos p) i
-      isI  = isInteractable pos' lvl
-      isP  = isPathable     pos' lvl
-      p'   = p { pos = pos' }
-      -- p'   = p & pos ~ pos'   -- lens style
-  in if isP then (p',w) else (p,w)
+  let lvl  = currentLevel w
+      pos' = move (p ^. pos) i
+      isP  = isPathableAt      pos' lvl
+      mbI  = getInteractableAt pos' lvl
+      p'   = p & pos .~ pos'  
+  in if (isJust mbI)
+        then interact (p,w) pos'
+        else if isP then (p',w) else (p,w)
 
+interact :: Game -> XY -> Game
+interact g@(p,w) xy =
+    let i = fromJust $ getInteractableAt xy $ currentLevel w
+    in case i of
+         E.Left  u -> interactWithUnit   g u
+         E.Right o -> interactWithObject g o
+                 
+interactWithUnit :: Game -> Unit -> Game
+interactWithUnit g u = g
 
-
-
+interactWithObject :: Game -> Object -> Game
+interactWithObject g o = g
+        
 

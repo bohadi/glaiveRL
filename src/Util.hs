@@ -1,5 +1,7 @@
 module Util ( 
-    XY(..)
+    XY
+  , Name
+  , Glyph, GlyphID
   , sym
   , isPathableGlyph
 ) where
@@ -8,18 +10,21 @@ import Data.Tuple(swap)
 import Data.Maybe(fromJust)
 import qualified Data.Map.Strict as Map
 
-type XY = (Int, Int)
+type XY   = (Int, Int)
+type Name = String
 
-sym :: String -> Char
-sym s = fromJust $ Map.lookup s glyphs
-
-isPathableGlyph :: Char -> Bool
+isPathableGlyph :: Glyph -> Bool
 isPathableGlyph c
   | c == sym "dirt"  = True
   | c == sym "grass" = True
   | c == sym "stone" = True
   | otherwise        = False
 
+type Glyph   = Char
+type GlyphID = String
+
+sym :: GlyphID -> Glyph
+sym s = fromJust $ Map.lookup s glyphs
 glyphs = Map.fromList $ fmap swap [
     -- player
     ('₩', "pc")       
@@ -42,6 +47,13 @@ glyphs = Map.fromList $ fmap swap [
   , ('┻', "UH") , ('┴', "uh")
   , ('┣', "VR") , ('├', "vr")
   , ('┫', "VL") , ('┤', "vl")
+    -- features
+  , ('▤', "chest")
+  , ('Ψ', "sconce")
+  , ('▣', "switch") , ('□', "switched1") , ('▪', "switched2")
+  , ('‰', "gears")
+  , ('ש', "harp") , ('♪', "music1") , ('♫', "music2")
+  , ('₽', "fishing rod") 
     -- enemy
   , ('ㄆ', "beastA") , ('ㄉ', "beastB") , ('ガ', "beastC") 
   , ('ゆ', "ogre") , ('わ', "ogrechief")                            -- beasts
@@ -60,22 +72,15 @@ glyphs = Map.fromList $ fmap swap [
   , ('め', "wyrm_sleep") , ('ぬ', "wyrm_ground")
   , ('ま', "wyrm_flight") , ('み', "wyrm_death")                    -- dragon
     -- npc
-  , ('☻', "npc1") , ('☺', "npc2")
+  , ('☻', "westnr") , ('☺', "eastnr")
   , ('♂', "male") , ('♀', "female")
     -- weapon
   , ('|', "glaive") , ('†', "glaiveSilv") , ('‡', "glaiveGold")
     -- loot
-  , ('▤', "chest1")
   , ('∘', "item1") , ('∙', "item2")
   , ('∗', "jewel") , ('¤', "gem")
   , ('ǒ', "ring")  , ('ǫ', "amulet")
   , ('◎', "crown")  
-    -- misc
-  , ('Ψ', "sconce")
-  , ('▣', "switch")
-  , ('‰', "gears")
-  , ('ש', "harp") , ('♪', "music1") , ('♫', "music2")
-  , ('₽', "fishing rod") 
     -- effects
   , ('ϟ', "bolt")  , ('Ϟ', "arc")
   , ('ж', "flame") , ('Ж', "fire")

@@ -4,31 +4,46 @@ module Draw (
 
 import Util
 import Unit
+import Object
 import Player
 import Level
 import World
 
 import Data.List(intersperse, foldl')
 import qualified Data.Map.Strict as Map
+import Control.Lens
 
 render :: Player -> World -> IO ()
-render p w = do 
-    let lvl = currentLevel w
-    let lay = placeUnits p (units lvl) (layout lvl)
-    mapM_ putStrLn $ doubleWidth <$> asStringList lay
+render p w =
+     mapM_ putStrLn $ doubleWidth <$> (asStringList $ placeDyna p w)
 
-doubleWidth :: [Char] -> [Char]
+doubleWidth :: [Glyph] -> [Glyph]
 doubleWidth [] = []
 doubleWidth (x:xs)
-    | inWall x  = x : (sym "H") : doubleWidth xs
-    | otherwise = x : (sym "dirt") : doubleWidth xs
+    | inWall  x  = x : (sym "H")     : doubleWidth xs
+    | inRock  x  = x : (sym "rock")  : doubleWidth xs
+    | inGrass x  = x : (sym "grass") : doubleWidth xs
+    | otherwise  = x : (sym "dirt")  : doubleWidth xs
 
-inWall :: Char -> Bool
-inWall x = elem x $ sym "H" : sym "DR" : sym "UR" : []
+inWall  x = elem x $ sym "H" : sym "DR" : sym "UR" : []
+inRock  x = elem x $ sym "rock"  : []
+inGrass x = elem x $ sym "grass" : []
 
-placeCharAt :: Layout -> (Char, XY) -> Layout
-placeCharAt l (c,(x,y)) = Map.insert (x,y) c l
+placeDyna :: Player -> World -> Layout
+placeDyna p w = lopu where
+    lvl  = currentLevel w
+    lo   = placeObjects (Map.toList $ objects lvl) (layout lvl)
+    lopu = placePlayerAndUnits p (Map.toList $ units lvl) lo
 
-placeUnits :: Player -> [Unit] -> Layout -> Layout
-placeUnits p us l = foldl' placeCharAt l nXYs where
-    nXYs = ((sym "pc"), (pos p)) : ( (\(n,_,xy)->(sym n, xy)) <$> us )
+placeObjects :: [(XY,Object)] -> Layout -> Layout
+placeObjects os l = foldl' placeGlyphAt l gXYs where
+    gXYs = (\(xy, (_,gid))->(xy, sym gid)) <$> os
+
+placePlayerAndUnits :: Player -> [(XY,Unit)] -> Layout -> Layout
+placePlayerAndUnits p us l = foldl' placeGlyphAt l gXYs where
+    gXYs = ((p ^. pos), (sym "pc"))
+         : ((\(xy,(_,gid,_))->(xy, sym gid)) <$> us)
+
+placeGlyphAt :: Layout -> (XY, Glyph) -> Layout
+placeGlyphAt l ((x,y), g) = Map.insert (x,y) g l
+
