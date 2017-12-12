@@ -79,7 +79,7 @@ createRoom :: Int -> Level
 createRoom seed = Level dim layout units objects where
     dim = (seed, seed)
     layout = enclose' dim $ asMap dim
-        $ replicate (snd dim) $ replicate (fst dim) $ sym "dirt"
+        $ replicate (snd dim) $ replicate (fst dim) $ sym "grass"
     units    = Map.fromList []
     objects  = Map.fromList []
              
