@@ -44,7 +44,7 @@ getInput = do
 keymap :: Char -> Maybe Input
 keymap c = Map.lookup c keys
 
-keys = Map.fromList $ [
+keys = Map.fromList [
     ('Q', Cmd Quit)     
     -- movement
   , ('s', Move Wait)

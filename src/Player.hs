@@ -74,7 +74,7 @@ listTraits = do
     mapM_ putStrLn $ (\(a,b)->show a++" "++show b) <$> l
 
 chooseTraits :: String -> [Trait]
-chooseTraits s = (toEnum 0 :: Trait) : []
+chooseTraits s = [toEnum 0 :: Trait]
 
 data Trait =
     BloodyMess

@@ -15,19 +15,19 @@ import Control.Lens
 
 render :: Player -> World -> IO ()
 render p w =
-     mapM_ putStrLn $ doubleWidth <$> (asStringList $ placeDyna p w)
+     mapM_ putStrLn $ doubleWidth <$> asStringList (placeDyna p w)
 
 doubleWidth :: [Glyph] -> [Glyph]
 doubleWidth [] = []
 doubleWidth (x:xs)
-    | inWall  x  = x : (sym "H")     : doubleWidth xs
-    | inRock  x  = x : (sym "rock")  : doubleWidth xs
-    | inGrass x  = x : (sym "grass") : doubleWidth xs
-    | otherwise  = x : (sym "dirt")  : doubleWidth xs
+    | inWall  x  = x : sym "H"     : doubleWidth xs
+    | inRock  x  = x : sym "rock"  : doubleWidth xs
+    | inGrass x  = x : sym "grass" : doubleWidth xs
+    | otherwise  = x : sym "dirt"  : doubleWidth xs
 
-inWall  x = elem x $ sym "H" : sym "DR" : sym "UR" : []
-inRock  x = elem x $ sym "rock"  : []
-inGrass x = elem x $ sym "grass" : []
+inWall  x = x `elem` [sym "H", sym "DR", sym "UR"]
+inRock  x = x == sym "rock"
+inGrass x = x == sym "grass"
 
 placeDyna :: Player -> World -> Layout
 placeDyna p w = lopu where
@@ -41,7 +41,7 @@ placeObjects os l = foldl' placeGlyphAt l gXYs where
 
 placePlayerAndUnits :: Player -> [(XY,Unit)] -> Layout -> Layout
 placePlayerAndUnits p us l = foldl' placeGlyphAt l gXYs where
-    gXYs = ((p ^. pos), (sym "pc"))
+    gXYs = (p ^. pos, sym "pc")
          : ((\(xy,(_,gid,_))->(xy, sym gid)) <$> us)
 
 placeGlyphAt :: Layout -> (XY, Glyph) -> Layout

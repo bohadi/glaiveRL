@@ -30,8 +30,7 @@ gameOver :: Game -> Bool
 gameOver (p,w) = False
 
 score :: Game -> IO ()
-score (p,w) = do
-    return ()
+score (p,w) = return ()
 
 newGame :: IO (Player, World)
 newGame = do 
@@ -52,14 +51,13 @@ newPlayer = do
     return $ createPC name (chooseDeity deity) (chooseTraits traits)
 
 newWorld :: IO World
-newWorld = do
-    return $ World [] [("cur", createRoom 20)]
+newWorld = return $ World [] [("cur", createRoom 20)]
 
 gameLoop :: Game -> IO Game
 gameLoop g@(p,w) = do 
     render p w
     i <- getInput
-    if i == (Cmd Quit) then return g else
+    if i == Cmd Quit then return g else
         let g' = update g i
         in if gameOver g'
            then do putStrLn "Good game."
@@ -76,7 +74,7 @@ update (p,w) (Move i) =
       isP  = isPathableAt      pos' lvl
       mbI  = getInteractableAt pos' lvl
       p'   = p & pos .~ pos'  
-  in if (isJust mbI)
+  in if isJust mbI
         then interact (p,w) pos'
         else if isP then (p',w) else (p,w)
 

@@ -27,7 +27,7 @@ type Unit = (Name, GlyphID, Stats)
 ustat :: GlyphID -> Stats
 ustat u = fromJust $ Map.lookup u unitStats
 unitStats = Map.fromList [
-    ("beastA"     , (Stats 2 2 4 4 0 0) )
-  , ("beastB"     , (Stats 4 4 2 2 0 0) )
-  , ("beastC"     , (Stats 4 4 4 4 0 0) )
+    ("beastA"     , Stats 2 2 4 4 0 0 )
+  , ("beastB"     , Stats 4 4 2 2 0 0 )
+  , ("beastC"     , Stats 4 4 4 4 0 0 )
   ]

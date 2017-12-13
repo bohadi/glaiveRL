@@ -38,20 +38,20 @@ terrainAt :: XY -> Level -> Glyph
 terrainAt xy lvl = fromJust $ Map.lookup xy $ layout lvl
 
 asStringList :: Layout -> [[Glyph]]
-asStringList l = (\line -> (\(_,v) -> v) <$> line) <$> grouped where
+asStringList l = (\line -> snd <$> line) <$> grouped where
     sorted  = sortWith (\((x,y),_) -> (y,x)) $ Map.toList l
-    grouped = groupBy (\a b -> (snd $ fst a) == (snd $ fst b)) sorted
+    grouped = groupBy (\a b -> snd (fst a) == snd (fst b)) sorted
 
 asMap :: XY -> [[Glyph]] -> Layout
-asMap (x,y) strs = Map.fromList $ foldr (++) [] ll where
+asMap (x,y) strs = Map.fromList $ concat ll where
     ll = (\(s,x) -> ((\(c,y) -> ((x,y),c))
                  <$> zip s [0..y-1] )) <$> zip strs [0..x-1]
 
 placeCorners :: XY -> Layout -> Layout
-placeCorners (x,y) l = (Map.insert (0,0) (sym "DR"))    -- (0,0) is top left
-                     $ (Map.insert (x,0) (sym "DL"))
-                     $ (Map.insert (0,y) (sym "UR")) 
-                     $  Map.insert (x,y) (sym "UL") l
+placeCorners (x,y) l = Map.insert (0,0) (sym "DR")    -- (0,0) is top left
+                     $ Map.insert (x,0) (sym "DL")
+                     $ Map.insert (0,y) (sym "UR")
+                     $ Map.insert (x,y) (sym "UL") l
 
 placeWalls :: XY -> Layout -> Layout
 placeWalls (x,y) l = l'' where
@@ -62,23 +62,13 @@ placeWalls (x,y) l = l'' where
     l'  = foldl' (\m k -> Map.insert k (sym "H") m) l  (top++bot)
     l'' = foldl' (\m k -> Map.insert k (sym "V") m) l' (left++right)
 
-enclose' :: XY -> Layout -> Layout
-enclose' xy l = (placeCorners xy) $ placeWalls xy l
-
-enclose :: [[Glyph]] -> [[Glyph]]   -- deprecated
-enclose l = transpose l'' where
-    dim = length $ l !! 0
-    top = replicate dim (sym "H")
-    bot = replicate dim (sym "H")
-    l' = (init $ top : (tail l)) ++ [bot]
-    left  = (sym "DR") : (replicate (dim-2) (sym "V")) ++ (sym "UR"):[]
-    right = (sym "DL") : (replicate (dim-2) (sym "V")) ++ (sym "UL"):[]
-    l'' = (init $ left : (tail $ transpose l')) ++ [right]
+enclose :: XY -> Layout -> Layout
+enclose xy l = placeCorners xy $ placeWalls xy l
 
 createRoom :: Int -> Level
 createRoom seed = Level dim layout units objects where
     dim = (seed, seed)
-    layout = enclose' dim $ asMap dim
+    layout = enclose dim $ asMap dim
         $ replicate (snd dim) $ replicate (fst dim) $ sym "grass"
     units    = Map.fromList []
     objects  = Map.fromList []
@@ -91,14 +81,14 @@ inBounds p d = not $ outOfBounds p d
 
 isPathableAt :: XY -> Level -> Bool
 isPathableAt xy lvl = 
-    (inBounds xy (dim lvl)) && (isPathableGlyph $ terrainAt xy lvl)
+    inBounds xy (dim lvl) && isPathableGlyph (terrainAt xy lvl)
 
 getInteractableAt :: XY -> Level -> Maybe Dyna
 getInteractableAt xy l =
     let mbU = Map.lookup xy $ units l
         mbO = Map.lookup xy $ objects  l
-    in  if (isJust mbU) then Just $ Left $ fromJust mbU
-                        else if (isJust mbO) then Just $ Right $ fromJust mbO
+    in  if isJust mbU then Just $ Left $ fromJust mbU
+                        else if isJust mbO then Just $ Right $ fromJust mbO
                                              else Nothing
 
 
