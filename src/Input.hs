@@ -1,4 +1,4 @@
-module Input ( 
+module Input (
     Input(..)
   , Cinput(..)
   , Minput(..)
@@ -22,7 +22,7 @@ data Cinput =
     Quit
   deriving (Show, Eq)
 
-data Minput = 
+data Minput =
     Wait
   | Up
   | Down
@@ -45,7 +45,7 @@ keymap :: Char -> Maybe Input
 keymap c = Map.lookup c keys
 
 keys = Map.fromList [
-    ('Q', Cmd Quit)     
+    ('Q', Cmd Quit)
     -- movement
   , ('s', Move Wait)
   , ('j', Move Down)     , ('k', Move Up)

@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module Player ( 
+module Player (
     Player(..)
   , pos
   , createPC
@@ -30,12 +30,12 @@ createPC na de tr = Player na 10 de st at sk tr su po where
 
 data Player = Player {
     name   :: Name
-  , faith  :: Int      
+  , faith  :: Int
   , deity  :: Deity
   , stats  :: Stats     , attrs  :: Attrs
   , skills :: Skills    , traits :: [Trait]
   , status :: [Status]
-  , _pos    :: XY  
+  , _pos    :: XY
 } deriving (Show)
 
 data Attrs = Attrs {
@@ -55,7 +55,7 @@ data Skills = Skills {
   , persuasion  :: Int
 } deriving (Show, Eq, Ord)
 
-data Deity = 
+data Deity =
     TheShiningOne
   | Elyvilon
   | Zin
@@ -87,4 +87,5 @@ data Trait =
 
 
 makeLenses ''Player
+
 

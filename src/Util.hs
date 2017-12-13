@@ -1,4 +1,4 @@
-module Util ( 
+module Util (
     XY
   , Name
   , Glyph, GlyphID
@@ -27,7 +27,7 @@ sym :: GlyphID -> Glyph
 sym s = fromJust $ Map.lookup s glyphs
 glyphs = Map.fromList $ fmap swap [
     -- player
-    ('₩', "pc")       
+    ('₩', "pc")
     -- terrain
   , (' ', "dirt")
   , ('░', "grass")
@@ -53,20 +53,20 @@ glyphs = Map.fromList $ fmap swap [
   , ('▣', "switch") , ('□', "switched1") , ('▪', "switched2")
   , ('‰', "gears")
   , ('ש', "harp") , ('♪', "music1") , ('♫', "music2")
-  , ('₽', "fishing rod") 
+  , ('₽', "fishing rod")
     -- enemy
-  , ('ㄆ', "beastA") , ('ㄉ', "beastB") , ('ガ', "beastC") 
+  , ('ㄆ', "beastA") , ('ㄉ', "beastB") , ('ガ', "beastC")
   , ('ゆ', "ogre") , ('わ', "ogrechief")                            -- beasts
 
-  , ('ϡ', "wingedling") , ('Ϡ', "winged") 
+  , ('ϡ', "wingedling") , ('Ϡ', "winged")
   , ('ѫ', "spiderling") , ('Ѫ', "spider")
   , ('∝', "hatchling") , ('∞', "hatched") , ('№', "eggbearer")      -- spiders
 
-  , ('ى', "serpentling") , ('گ', "serpent") 
+  , ('ى', "serpentling") , ('گ', "serpent")
   , ('は', "nagawar") , ('ば', "nagamage") , ('ぽ', "nagapriest")   -- snakes
 
   , ('ぇ', "zomling") , ('え', "zombie")
-  , ('ㄓ', "skeleton") , ('ㄤ', "headless") , ('ネ', "geist")            
+  , ('ㄓ', "skeleton") , ('ㄤ', "headless") , ('ネ', "geist")
   , ('₤', "lich")                                                   -- undead
 
   , ('め', "wyrm_sleep") , ('ぬ', "wyrm_ground")
@@ -80,7 +80,7 @@ glyphs = Map.fromList $ fmap swap [
   , ('∘', "item1") , ('∙', "item2")
   , ('∗', "jewel") , ('¤', "gem")
   , ('ǒ', "ring")  , ('ǫ', "amulet")
-  , ('◎', "crown")  
+  , ('◎', "crown")
     -- effects
   , ('ϟ', "bolt")  , ('Ϟ', "arc")
   , ('ж', "flame") , ('Ж', "fire")

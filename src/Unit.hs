@@ -1,4 +1,4 @@
-module Unit ( 
+module Unit (
     Stats(..)
   , Status(..)
   , Unit(..)
@@ -21,7 +21,7 @@ data Status =
   | Berserk
   | Muddle
   deriving (Show, Eq, Ord)
-   
+
 type Unit = (Name, GlyphID, Stats)
 
 ustat :: GlyphID -> Stats

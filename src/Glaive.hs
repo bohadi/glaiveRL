@@ -33,7 +33,7 @@ score :: Game -> IO ()
 score (p,w) = return ()
 
 newGame :: IO (Player, World)
-newGame = do 
+newGame = do
     p <- newPlayer
     w <- newWorld
     return (p,w)
@@ -54,7 +54,7 @@ newWorld :: IO World
 newWorld = return $ World [] [("cur", createRoom 20)]
 
 gameLoop :: Game -> IO Game
-gameLoop g@(p,w) = do 
+gameLoop g@(p,w) = do
     render p w
     i <- getInput
     if i == Cmd Quit then return g else
@@ -73,7 +73,7 @@ update (p,w) (Move i) =
       pos' = move (p ^. pos) i
       isP  = isPathableAt      pos' lvl
       mbI  = getInteractableAt pos' lvl
-      p'   = p & pos .~ pos'  
+      p'   = p & pos .~ pos'
   in if isJust mbI
         then interact (p,w) pos'
         else if isP then (p',w) else (p,w)
@@ -84,11 +84,10 @@ interact g@(p,w) xy =
     in case i of
          E.Left  u -> interactWithUnit   g u
          E.Right o -> interactWithObject g o
-                 
+
 interactWithUnit :: Game -> Unit -> Game
 interactWithUnit g u = g
 
 interactWithObject :: Game -> Object -> Game
 interactWithObject g o = g
-        
 

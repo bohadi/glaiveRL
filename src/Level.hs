@@ -1,4 +1,4 @@
-module Level ( 
+module Level (
     Level(..)
   , Dyna
   , Layout
@@ -72,7 +72,7 @@ createRoom seed = Level dim layout units objects where
         $ replicate (snd dim) $ replicate (fst dim) $ sym "grass"
     units    = Map.fromList []
     objects  = Map.fromList []
-             
+
 outOfBounds :: XY -> XY -> Bool
 outOfBounds (x,y) (w,h) =
     (x < 0) || (x > w-1) || (y < 0) || (y > h-1)
@@ -80,7 +80,7 @@ inBounds :: XY -> XY -> Bool
 inBounds p d = not $ outOfBounds p d
 
 isPathableAt :: XY -> Level -> Bool
-isPathableAt xy lvl = 
+isPathableAt xy lvl =
     inBounds xy (dim lvl) && isPathableGlyph (terrainAt xy lvl)
 
 getInteractableAt :: XY -> Level -> Maybe Dyna

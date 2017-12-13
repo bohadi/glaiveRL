@@ -1,4 +1,4 @@
-module Draw ( 
+module Draw (
     render
 ) where
 

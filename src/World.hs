@@ -1,4 +1,4 @@
-module World ( 
+module World (
     World(..)
   , currentLevel
 ) where
